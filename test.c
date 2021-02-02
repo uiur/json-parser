@@ -13,11 +13,12 @@ int main(int argc, char **argv) {
     "null",
     "true",
     "false",
+
     // object
     "{}",
     "{\"foo\": 1,\"bar\": 2}",
     "{\"foo\": 1,\"bar\": { \"foo2\": 2 }}",
-    "{\"fooBar\": {}}",
+    "{\"fooBar\": { \"bar\": true }}",
 
     // array
     "[]",

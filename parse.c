@@ -128,8 +128,9 @@ Token* tokenize(char* string) {
   Token* head = malloc(sizeof(Token));
   Token* current = head;
   while (*string != '\0') {
-    while (is_whitespace(*string)) {
+    if (is_whitespace(*string)) {
       string++;
+      continue;
     }
 
     int found = 0;
