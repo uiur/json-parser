@@ -33,8 +33,12 @@ typedef struct JsonObjectEntryContainer {
 typedef struct JsonObject {
   enum JsonValueType type;
   int size;
+  int used;
   struct JsonObjectEntryContainer **containers;
 } JsonObject;
+
+JsonNumber* json_number_new(int n);
+JsonString* json_string_new(char *str);
 
 JsonObject* json_object_new();
 void json_object_write(JsonObject *object, JsonString *key, JsonValue *value);

@@ -22,16 +22,15 @@ char buf[10000];
 int main(int argc, char **argv) {
   JsonObject *jsonObject = json_object_new();
 
-  JsonString *jsonString = malloc(sizeof(JsonString));
-  jsonString->type = JSON_VALUE_STRING;
-  jsonString->value = "foo";
+  for (int i = 0; i < 20; i++) {
+    char *c = calloc(2, sizeof(char));
+    c[0] = 'a' + i;
+    printf("%s: %d\n", c, i);
 
-  JsonNumber *jsonNumber = malloc(sizeof(JsonNumber));
-  jsonNumber->type = JSON_VALUE_NUMBER;
-  jsonNumber->value = 10;
+    json_object_write(jsonObject, json_string_new(c), (JsonValue*)json_number_new(i));
+  }
 
-  json_object_write(jsonObject, jsonString, (JsonValue *)jsonNumber);
-  JsonValue *value = json_object_read(jsonObject, jsonString);
+  JsonValue *value = json_object_read(jsonObject, json_string_new("c"));
   json_value_print(value);
   printf("\n");
 
