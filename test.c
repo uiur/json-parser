@@ -1,10 +1,11 @@
 #include "parse.h"
+#include "value.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-int main(int argc, char **argv) {
+void test_parse() {
   char* data[] = {
     "0",
     "1234",
@@ -40,6 +41,30 @@ int main(int argc, char **argv) {
     print_node(node);
     printf("\n\n");
   }
+}
+
+void test_value() {
+  json_value_print((JsonValue*)json_string_new("foo"));
+  printf("\n");
+  json_value_print((JsonValue*)json_number_new(42));
+  printf("\n");
+
+  JsonObject* object = json_object_new();
+  json_value_print((JsonValue*)object);
+  printf("\n");
+
+  {
+    JsonObject* object = json_object_new();
+    json_object_write(object, json_string_new("foo"), (JsonValue*)json_number_new(12));
+    json_object_write(object, json_string_new("bar"), (JsonValue*)json_number_new(34));
+    json_value_print((JsonValue*)object);
+    printf("\n");
+  }
+}
+
+int main(int argc, char **argv) {
+  test_parse();
+  test_value();
 
   return 0;
 }

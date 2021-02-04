@@ -4,20 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void json_value_print(JsonValue *value) {
-  if (value == NULL) {
-    fprintf(stderr, "unexpected null\n");
-    abort();
-  }
-
-  if (value->type == JSON_VALUE_STRING) {
-    JsonString *s = (JsonString*)value;
-    printf("%s", s->value);
-  } else if (value->type == JSON_VALUE_NUMBER) {
-    printf("%d", ((JsonNumber*)value)->value);
-  }
-}
-
 char buf[10000];
 int main(int argc, char **argv) {
   JsonObject *jsonObject = json_object_new();
