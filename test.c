@@ -60,6 +60,14 @@ void test_value() {
     json_value_print((JsonValue*)object);
     printf("\n");
   }
+
+  {
+    JsonArray* array = json_array_new();
+    json_array_write(array, 0, (JsonValue*)json_number_new(1));
+    json_array_write(array, 1, (JsonValue*)json_number_new(2));
+    json_value_print((JsonValue*)array);
+    printf("\n");
+  }
 }
 
 int main(int argc, char **argv) {

@@ -122,6 +122,25 @@ JsonValue* json_object_read(JsonObject *object, JsonString *key) {
   return NULL;
 }
 
+JsonArray* json_array_new() {
+  JsonArray *array = malloc(sizeof(JsonArray));
+  array->type = JSON_VALUE_ARRAY;
+  array->object = json_object_new();
+  return array;
+}
+
+void json_array_write(JsonArray *array, int index, JsonValue *value) {
+  char *c = calloc(2, sizeof(char));
+  c[0] = '0' + index;
+  json_object_write(array->object, json_string_new(c), value);
+}
+
+JsonValue* json_array_read(JsonArray *array, int index) {
+  char *c = calloc(2, sizeof(char));
+  c[0] = '0' + index;
+  return json_object_read(array->object, json_string_new(c));
+}
+
 char* json_stringify(JsonValue *value) {
   if (value->type == JSON_VALUE_STRING) {
     JsonString *s = (JsonString*)value;
@@ -158,8 +177,34 @@ char* json_stringify(JsonValue *value) {
     }
 
     char *buf = calloc(strlen(inner) + 10, sizeof(char));
-    sprintf(buf, "{ %s }", inner);
+    sprintf(buf, "{%s}", inner);
     return buf;
+  } else if (value->type == JSON_VALUE_ARRAY) {
+    JsonArray* array = (JsonArray*)value;
+    JsonObject* object = array->object;
+
+    char inner[10000] = "";
+
+    for (int i = 0; i < object->used; i++) {
+      if (object->keys[i] == NULL) continue;
+
+      JsonString *key = object->keys[i];
+      JsonValue *value = json_object_read(object, key);
+      if (value == NULL) continue;
+
+      char *value_str = json_stringify(value);
+
+      strcat(inner, value_str);
+      if (i < object->used - 1) {
+        strcat(inner, ", ");
+      }
+    }
+
+    char *buf = calloc(strlen(inner) + 10, sizeof(char));
+    sprintf(buf, "[%s]", inner);
+    return buf;
+
+    return json_stringify((JsonValue*)array->object);
   } else {
     fprintf(stderr, "unexpected type: %i\n", value->type);
     abort();

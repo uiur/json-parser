@@ -38,11 +38,20 @@ typedef struct JsonObject {
   struct JsonObjectEntryContainer **containers;
 } JsonObject;
 
+typedef struct JsonArray {
+  enum JsonValueType type;
+  struct JsonObject *object;
+} JsonArray;
+
 JsonNumber* json_number_new(int n);
 JsonString* json_string_new(char *str);
 
 JsonObject* json_object_new();
 void json_object_write(JsonObject *object, JsonString *key, JsonValue *value);
 JsonValue* json_object_read(JsonObject *object, JsonString *key);
+
+JsonArray* json_array_new();
+void json_array_write(JsonArray *object, int index, JsonValue *value);
+JsonValue* json_array_read(JsonArray *object, int index);
 
 void json_value_print(JsonValue *value);
