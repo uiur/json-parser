@@ -53,5 +53,8 @@ JsonValue* json_object_read(JsonObject *object, JsonString *key);
 JsonArray* json_array_new();
 void json_array_write(JsonArray *object, int index, JsonValue *value);
 JsonValue* json_array_read(JsonArray *object, int index);
+int json_array_length(JsonArray *object);
+
+JsonValue* evaluate(Node *node);
 
 void json_value_print(JsonValue *value);

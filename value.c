@@ -141,6 +141,10 @@ JsonValue* json_array_read(JsonArray *array, int index) {
   return json_object_read(array->object, json_string_new(c));
 }
 
+int json_array_length(JsonArray *array) {
+  return array->object->used;
+}
+
 char* json_stringify(JsonValue *value) {
   if (value->type == JSON_VALUE_STRING) {
     JsonString *s = (JsonString*)value;
@@ -209,6 +213,53 @@ char* json_stringify(JsonValue *value) {
     fprintf(stderr, "unexpected type: %i\n", value->type);
     abort();
   }
+}
+
+JsonValue* evaluate(Node *node) {
+  if (node->kind == NODE_PRIMARY_NUMBER) {
+    return (JsonValue*) json_number_new(node->value);
+  }
+
+  if (node->kind == NODE_PRIMARY_STRING) {
+    return (JsonValue*)json_string_new(node->string);
+  }
+
+  if (node->kind == NODE_OBJECT) {
+    JsonObject *json_object = json_object_new();
+
+    for (int i = 0; node->children[i] != NULL; i++){
+      Node *entry_node = node->children[i];
+      Node *key_node = entry_node->children[0];
+      Node *value_node = entry_node->children[1];
+
+      JsonValue *key = evaluate(key_node);
+      JsonValue *value = evaluate(value_node);
+
+      json_object_write(json_object, (JsonString*)key, value);
+    }
+
+    return (JsonValue*)json_object;
+  }
+
+  if (node->kind == NODE_ARRAY) {
+    JsonArray *json_array = json_array_new();
+
+    for (int i = 0; node->children[i] != NULL; i++) {
+      Node *value_node = node->children[i];
+      JsonValue *value = evaluate(value_node);
+
+      json_array_write(json_array, i, value);
+    }
+
+    return (JsonValue*)json_array;
+  }
+
+  fprintf(stderr, "unexpected node: %d", node->kind);
+  abort();
+
+  // NODE_PRIMARY_TRUE,
+  // NODE_PRIMARY_FALSE,
+  // NODE_PRIMARY_NULL,
 }
 
 void json_value_print(JsonValue *value) {
