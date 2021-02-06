@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
   Node *node = parse(token);
 
   JsonValue *value = evaluate(node);
-  // json_value_print(value);
+  json_value_print(value);
   printf("\n");
   json_value_filter(value, selector);
   printf("\n");

@@ -4,31 +4,30 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+char* data[] = {
+  "0",
+  "1234",
+  "-12",
+  "\"bar123\"",
+  "null",
+  "true",
+  "false",
+
+  // object
+  "{}",
+  "{\"foo\": 1,\"bar\": 2}",
+  "{\"foo\": 1,\"bar\": { \"foo2\": 2 }}",
+  "{\"fooBar\": { \"bar\": true }}",
+
+  // array
+  "[]",
+  "[ 1, 2, \"three\" ]",
+  "[ { \"foo\": 1 } ]",
+  "[ {} ]",
+  NULL
+};
 
 void test_parse() {
-  char* data[] = {
-    "0",
-    "1234",
-    "-12",
-    "\"bar123\"",
-    "null",
-    "true",
-    "false",
-
-    // object
-    "{}",
-    "{\"foo\": 1,\"bar\": 2}",
-    "{\"foo\": 1,\"bar\": { \"foo2\": 2 }}",
-    "{\"fooBar\": { \"bar\": true }}",
-
-    // array
-    "[]",
-    "[ 1, 2, \"three\" ]",
-    "[ { \"foo\": 1 } ]",
-    "[ {} ]",
-    NULL
-  };
-
   for (int i = 0; data[i] != NULL; i++) {
     char* input = data[i];
     printf("input:\t%s\n", input);
@@ -70,9 +69,27 @@ void test_value() {
   }
 }
 
+void test_eval() {
+  for (int i = 0; data[i] != NULL; i++) {
+    char* input = data[i];
+
+    printf("input: %s\n", input);
+
+    JsonValue* value = eval(input);
+    if (value == NULL) {
+      printf("got: NULL\n");
+      abort();
+    }
+
+    json_value_print(value);
+    printf("\n\n");
+  }
+}
+
 int main(int argc, char **argv) {
   test_parse();
   test_value();
+  test_eval();
 
   return 0;
 }

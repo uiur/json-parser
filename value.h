@@ -2,6 +2,7 @@ enum JsonValueType {
   JSON_VALUE_NUMBER,
   JSON_VALUE_STRING,
   JSON_VALUE_NULL,
+  JSON_VALUE_BOOLEAN,
   JSON_VALUE_OBJECT,
   JSON_VALUE_ARRAY
 };
@@ -15,6 +16,15 @@ typedef struct JsonNumber {
   enum JsonValueType type;
   int value;
 } JsonNumber;
+
+typedef struct JsonNull {
+  enum JsonValueType type;
+} JsonNull;
+
+typedef struct JsonBoolean {
+  enum JsonValueType type;
+  int value;
+} JsonBoolean;
 
 typedef struct JsonValue {
   enum JsonValueType type;
@@ -45,6 +55,8 @@ typedef struct JsonArray {
 
 JsonNumber* json_number_new(int n);
 JsonString* json_string_new(char *str);
+JsonNull* json_null_new();
+JsonBoolean* json_boolean_new(int value);
 
 JsonObject* json_object_new();
 void json_object_write(JsonObject *object, JsonString *key, JsonValue *value);
@@ -57,4 +69,5 @@ int json_array_length(JsonArray *object);
 
 JsonValue* evaluate(Node *node);
 
+JsonValue* eval(char *source);
 void json_value_print(JsonValue *value);

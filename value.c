@@ -23,6 +23,20 @@ JsonString* json_string_new(char* str) {
   return jsonString;
 }
 
+JsonNull* json_null_new() {
+  JsonNull *jsonNull = malloc(sizeof(JsonNull));
+  jsonNull->type = JSON_VALUE_NULL;
+
+  return jsonNull;
+}
+
+JsonBoolean* json_boolean_new(int value) {
+  JsonBoolean *json_boolean = malloc(sizeof(JsonBoolean));
+  json_boolean->type = JSON_VALUE_BOOLEAN;
+  json_boolean->value = value;
+
+  return json_boolean;
+}
 
 int json_object_hash(int size, char* s) {
   int h = 0;
@@ -155,6 +169,12 @@ char* json_stringify(JsonValue *value) {
     char *buf = calloc(1000, sizeof(char));
     sprintf(buf, "%d", ((JsonNumber*)value)->value);
     return buf;
+  } else if (value->type == JSON_VALUE_NULL) {
+    return "null";
+
+  } else if (value->type == JSON_VALUE_BOOLEAN) {
+    JsonBoolean *boolean = (JsonBoolean*)value;
+    return boolean->value ? "true" : "false";
   } else if (value->type == JSON_VALUE_OBJECT) {
     JsonObject* object = (JsonObject*)value;
 
@@ -224,6 +244,18 @@ JsonValue* evaluate(Node *node) {
     return (JsonValue*)json_string_new(node->string);
   }
 
+  if (node->kind == NODE_PRIMARY_NULL) {
+    return (JsonValue*)json_null_new();
+  }
+
+  if (node->kind == NODE_PRIMARY_TRUE) {
+    return (JsonValue*)json_boolean_new(1);
+  }
+
+  if (node->kind == NODE_PRIMARY_FALSE) {
+    return (JsonValue*)json_boolean_new(0);
+  }
+
   if (node->kind == NODE_OBJECT) {
     JsonObject *json_object = json_object_new();
 
@@ -254,12 +286,20 @@ JsonValue* evaluate(Node *node) {
     return (JsonValue*)json_array;
   }
 
+
   fprintf(stderr, "unexpected node: %d", node->kind);
   abort();
 
   // NODE_PRIMARY_TRUE,
   // NODE_PRIMARY_FALSE,
   // NODE_PRIMARY_NULL,
+}
+
+JsonValue* eval(char *source) {
+  Token *token = tokenize(source);
+  Node *node = parse(token);
+  JsonValue *value = evaluate(node);
+  return value;
 }
 
 void json_value_print(JsonValue *value) {
